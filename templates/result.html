@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>스크래핑 완료</title>
+</head>
+<body>
+    <h1>스크래핑 완료!</h1>
+    <p>'{{ filename }}' 파일이 생성되었습니다.</p>
+    <a href="{{ url_for('download', filename=filename) }}">다운로드</a>
+</body>
+</html>

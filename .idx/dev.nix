@@ -1,53 +1,38 @@
-# To learn more about how to use Nix to configure your environment
-# see: https://developers.google.com/idx/guides/customize-idx-env
-{ pkgs, ... }: {
-  # Which nixpkgs channel to use.
-  channel = "stable-24.05"; # or "unstable"
-  # Use https://search.nixos.org/packages to find packages
+
+{ pkgs, ... }:
+
+let
+  # requirements.txt에 명시된 라이브러리들을 포함하는 Python 환경을 생성합니다.
+  pythonWithPackages = pkgs.python3.withPackages (ps: [
+    ps.flask
+    ps.pandas
+    ps.requests
+    ps.beautifulsoup4
+    ps.openpyxl
+  ]);
+in
+{
+  # 위에서 정의한 Python 환경을 패키지로 사용합니다.
   packages = [
-    # pkgs.go
-    # pkgs.python311
-    # pkgs.python311Packages.pip
-    # pkgs.nodejs_20
-    # pkgs.nodePackages.nodemon
+    pythonWithPackages
   ];
-  # Sets environment variables in the workspace
-  env = {};
+
   idx = {
-    # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
-      # "vscodevim.vim"
-      "google.gemini-cli-vscode-ide-companion"
+      "ms-python.python"
     ];
-    # Enable previews
+
+    # 이제 pip install을 실행할 필요가 없으므로 workspace 설정을 제거합니다.
+    workspace = {};
+
+    # 웹 미리보기 설정을 구성합니다.
     previews = {
       enable = true;
       previews = {
-        # web = {
-        #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
-        #   # and show it in IDX's web preview panel
-        #   command = ["npm" "run" "dev"];
-        #   manager = "web";
-        #   env = {
-        #     # Environment variables to set for your server
-        #     PORT = "$PORT";
-        #   };
-        # };
-      };
-    };
-    # Workspace lifecycle hooks
-    workspace = {
-      # Runs when a workspace is first created
-      onCreate = {
-        # Example: install JS dependencies from NPM
-        # npm-install = "npm install";
-        # Open editors for the following files by default, if they exist:
-        default.openFiles = [ ".idx/dev.nix" "README.md" ];
-      };
-      # Runs when the workspace is (re)started
-      onStart = {
-        # Example: start a background task to watch and re-build backend code
-        # watch-backend = "npm run watch-backend";
+        web = {
+          command = ["python" "app.py"];
+          manager = "web";
+        };
       };
     };
   };
