@@ -2,11 +2,151 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>스크래핑 완료</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수집 완료 | Smart Auction Scraper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --success-color: #10b981;
+            --success-hover: #059669;
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 45px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #d1fae5;
+            color: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            margin: 0 auto 25px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #064e3b;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .file-info {
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+            margin-bottom: 30px;
+            font-family: monospace;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-download {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-download:hover {
+            background-color: var(--success-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-home {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .btn-home:hover {
+            background-color: #e2e8f0;
+            color: var(--text-main);
+        }
+    </style>
 </head>
 <body>
-    <h1>스크래핑 완료!</h1>
-    <p>'{{ filename }}' 파일이 생성되었습니다.</p>
-    <a href="{{ url_for('download', filename=filename) }}">다운로드</a>
+    <div class="container">
+        <div class="card">
+            <div class="success-icon">✓</div>
+            <h1>스크래핑 성공!</h1>
+            <p>모든 데이터를 수집하고 엑셀 파일로<br>변환하는 작업을 마쳤습니다.</p>
+            
+            <div class="file-info">
+                📄 {{ filename }}
+            </div>
+            
+            <div class="button-group">
+                <a href="{{ url_for('download', filename=filename) }}" class="btn btn-download">
+                    엑셀 파일 다운로드
+                </a>
+                <a href="/" class="btn btn-home">
+                    처음으로 돌아가기
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

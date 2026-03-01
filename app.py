@@ -1,7 +1,7 @@
-
 from flask import Flask, render_template, request, send_file, redirect, url_for
-import subprocess
 import os
+import tempfile
+from scraper import scrape_auction_data
 
 app = Flask(__name__)
 
@@ -15,26 +15,39 @@ def scrape():
     if not url:
         return "URL을 입력해주세요.", 400
 
-    # scraper.py를 서브프로세스로 실행
     try:
-        subprocess.run(["python", "scraper.py", url], check=True)
+        # 스크래핑 함수 직접 호출
+        df = scrape_auction_data(url)
+        
+        if df is None:
+            return "데이터를 찾을 수 없습니다. 올바른 URL인지 확인해주세요.", 404
+
+        # 임시 파일 생성 (클라우드 환경 호환)
+        # delete=False로 설정하여 파일 전송 후 삭제하도록 처리하거나
+        # OS의 임시 디렉토리에 저장합니다.
+        temp_dir = tempfile.gettempdir()
+        file_path = os.path.join(temp_dir, 'result.xlsx')
+        df.to_excel(file_path, index=False)
+        
         return redirect(url_for('result'))
-    except subprocess.CalledProcessError as e:
-        return f"스크래핑 중 오류가 발생했습니다: {e}", 500
-    except FileNotFoundError:
-        return "scraper.py를 찾을 수 없습니다.", 500
+        
+    except Exception as e:
+        return f"오류가 발생했습니다: {str(e)}", 500
 
 @app.route('/result')
 def result():
-    return render_template('result.html', filename='경매물건목록.xlsx')
+    return render_template('result.html', filename='result.xlsx')
 
 @app.route('/download/<filename>')
 def download(filename):
-    file_path = os.path.join(os.getcwd(), filename)
+    # 임시 디렉토리에서 파일 찾기
+    temp_dir = tempfile.gettempdir()
+    file_path = os.path.join(temp_dir, filename)
+    
     if os.path.exists(file_path):
-        return send_file(file_path, as_attachment=True)
+        return send_file(file_path, as_attachment=True, download_name='경매물건목록.xlsx')
     else:
-        return "파일을 찾을 수 없습니다.", 404
+        return "파일을 찾을 수 없습니다. 다시 스크래핑해주세요.", 404
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
